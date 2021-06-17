@@ -119,10 +119,12 @@ const useStyles = makeStyles({
     selectButton: {
         position:'absolute',
         display:'block',
-        background:'black',
+        // background:'black',
+        textDecoration:'underline',
+        textTransform:'uppercase',
         color:'white',
-        bottom: 10,
-        padding: '10px 15px'
+        bottom: 20,
+        cursor:'pointer'
     }
 });
 
@@ -177,7 +179,7 @@ const NbaGameCard = (props) => {
                             <p className={classes.gameTime}>{props.gameTime}</p>
                             <p className={classes.timeRemaining}>{ props.timeRemaining }</p>
                         </div>
-                        <a className={classes.selectButton}>Select Game</a>
+                        <a className={classes.selectButton}>Select</a>
                     </div>
                 </Grid>
                 <Grid item xs={5}>
