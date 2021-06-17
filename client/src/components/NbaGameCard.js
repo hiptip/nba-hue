@@ -10,21 +10,35 @@ import PickColors from './PickColors';
 
 
 const useStyles = makeStyles({
+    '@keyframes hover': {
+        from: {
+            boxShadow:'0 0 30px rgba(255,255,255,0)',
+        },
+        to: {
+            boxShadow:'0 0 30px rgba(255,255,255,.7)',
+        },
+    },
     root: {
         // position: 'absolute',
         width: 600,
-        height: 121,
         left: 398,
         top: 231,
-        background: '#FFFFFF',
-        // opacity: 0.2,
-        boxShadow: '1px 5px 10px 4px rgb(242, 245, 248)',
-        borderRadius: 12,
+        background: 'rgba(255,255,255,0)',
+        borderRadius: 5,
         fontFamily: 'Roboto Mono',
         fontStyle: 'normal',
         fontWeight: 'bold',
+        transform: 'scale(1,1)',
+        transition: 'transform .2s ease-out',
+        overflow:'hidden',
         '&:hover': {
-            border: '1px solid grey'
+            animation: '$hover 1s infinite alternate ease-in-out',
+            transform: 'scale(1.01,1.01)',
+            transition: 'transform .2s ease-out'
+        },
+        '@media (max-width:600px)': {
+            width: '100%',
+            borderRadius: 0
         }
         // display: 'inline-block'
     },
@@ -39,21 +53,43 @@ const useStyles = makeStyles({
         fontStyle: 'normal',
         fontWeight: 'bold',
         fontSize: 16,
+        margin:0,
+        padding:0
         // lineHeight: 21,
         // display: 'flex',
         // alignItems: 'center'
     },
     score: {
-        fontFamily: 'Roboto Mono',
+        fontFamily: 'Roboto',
         fontStyle: 'normal',
-        fontWeight: 'bold',
-        fontSize: 32,
+        fontWeight: '400',
+        fontSize: 70,
+        padding:0,
+        margin:0,
+        lineHeight:'1em',
+        letterSpacing:'-.03em'
+    },
+    centerSpread: {
+        padding: 0,
+        margin:0,
+        background:'rgba(255,255,255,.2)',
+        height:'100%',
+        display:'flex',
+        alignItems:'center',
+        justifyContent:'center',
+        color:'white',
+    },
+    gameTime: {
+        margin:0,
+        padding:0,
     },
     // centerSpread: {
     //     alignItems: 'center'
     // },
     stats: {
-        display: 'inline-block',
+        display: 'block',
+        padding:20,
+        background:'white'
     },
     vl: {
         position: 'relative',
@@ -61,14 +97,32 @@ const useStyles = makeStyles({
         height: 15.5,
         left: '50%'
     },
-    logo: {
-        background: 'url("https://dl.dropbox.com/s/xghc9v5bvlu9d1s/bucks.png")',
+    logoAway: {
+        background: 'url("https://www.nba.com/clippers/sites/clippers/files/lac-global-180705.png")',
         backgroundRepeat: 'no-repeat',
-        backgroundSize: '150% 150%',
+        backgroundSize: '130%',
         backgroundPosition: 'center',
-        borderRadius: '50%',
-        height: 60,
-        width: 60
+        height: 150,
+        width: '100%',
+        border:'none!important',
+    },
+    logoHome: {
+        background: 'url("https://vectorlogoseek.com/wp-content/uploads/2020/06/utah-jazz-vector-logo.png")',
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: '130%',
+        backgroundPosition: 'center',
+        height: 150,
+        width: '100%',
+        border:'none!important',
+        borderCollapse:'collapse!important'
+    },
+    selectButton: {
+        position:'absolute',
+        display:'block',
+        background:'black',
+        color:'white',
+        bottom: 10,
+        padding: '10px 15px'
     }
 });
 
@@ -110,7 +164,7 @@ const NbaGameCard = (props) => {
             <Grid container onClick={() => setTeams(props.homeTeam, props.awayTeam)}>
                 <Grid item xs={5}>
                     <div className={classes.awayTeam}>
-                        <img className={classes.logo}></img>
+                        <div className={classes.logoAway}></div>
                         <div className={classes.stats}>
                             <p className={classes.teamName}>{props.awayTeam}</p>
                             <p className={classes.score}>{props.awayScore}</p>
@@ -119,19 +173,20 @@ const NbaGameCard = (props) => {
                 </Grid>
                 <Grid item xs={2}>
                     <div className={classes.centerSpread}>
-                        <div className={`${classes.vl} ${classes.topLine}`}></div>
-                        <p>{props.gameTime}</p>
-                        <p>{ props.timeRemaining }</p>
-                        <div className={`${classes.vl} ${classes.bottomLine}`}></div>
+                        <div className={classes.verticalCenter}>
+                            <p className={classes.gameTime}>{props.gameTime}</p>
+                            <p className={classes.timeRemaining}>{ props.timeRemaining }</p>
+                        </div>
+                        <a className={classes.selectButton}>Select Game</a>
                     </div>
                 </Grid>
                 <Grid item xs={5}>
                     <div className={classes.homeTeam}>
+                        <div className={classes.logoHome}></div>
                         <div className={classes.stats}>
                             <p className={classes.teamName}>{props.homeTeam}</p>
                             <p className={classes.score}>{props.homeScore}</p>
                         </div>
-                        <img></img>
                     </div>
                 </Grid>
             </Grid>

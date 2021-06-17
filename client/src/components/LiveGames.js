@@ -5,21 +5,58 @@ import NbaGameCard from './NbaGameCard';
 
 const useStyles = makeStyles({
     '@keyframes testAnimation': {
-        from: { opacity: 1 },
-        to: { opacity: .2 },
+        from: {
+            background:'#ff0000',
+        },
+        to: {
+            background:'#cc0000',
+        },
     },
-
+    "@keyframes gradient": {
+        "0%": {
+            backgroundPosition: '0% 50%'
+        },
+        "50%": {
+            backgroundPosition: '100% 50%'
+        },
+        "100%": {
+            backgroundPosition: '0% 50%'
+        }
+    },
+    background: {
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        bottom: 0,
+        right: 0,
+        overflow: 'auto',
+        backgroundImage: `linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab)`,
+        backgroundPosition: 'center, center',
+        backgroundSize: '400% 400%',
+        backgroundRepeat: 'no-repeat, no-repeat',
+        animation: '$gradient 15s ease infinite',
+        fontFamily: 'Roboto Mono'
+    },
+    h2: {
+        padding:0,
+        margin:'0 0 20px 0',
+        fontFamily: 'Roboto Mono',
+        color:'white',
+        fontSize:'32px',
+        textTransform:'uppercase'
+    },
     live: {
+        marginTop:50,
         fontFamily: 'Roboto Mono',
         fontStyle: 'normal',
-        fontWeight: 'bold',
+        fontWeight: '400',
         fontSize: 18,
-        borderStyle: 'solid',
+        display:'inline-block',
+        letterSpacing: 1,
         borderRadius: 15,
-        padding: 3,
-        color: 'red',
-        animation: '$testAnimation 1.5s infinite alternate ease-in-out'
-
+        padding: '3px 10px',
+        color: 'white',
+        animation: '$testAnimation 1s infinite alternate ease-in-out'
     },
 });
 
@@ -54,11 +91,13 @@ const LiveGames = (props) => {
     const classes = useStyles();
 
     return (
+        <div className={classes.background}>
         <Grid container spacing={3} align="center" justify="center" alignItems="center">
             <Grid item>
                 <h1 className={classes.live}>
                     LIVE
                 </h1>
+                <h2 className={classes.h2}>Choose a live game</h2>
             </Grid>
             {props.liveGames.map(data => //change to props.liveGames
                 <Grid item xs={12}>
@@ -66,6 +105,7 @@ const LiveGames = (props) => {
                 </Grid>
             )}
         </Grid>
+        </div>
     )
 }
 
