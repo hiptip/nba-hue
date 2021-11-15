@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer');
 const { liveGames, liveGame } = require("./model");
 var mongoose = require('mongoose');
-mongoose.connect('mongodb+srv://nbauser:nbauserpwd@cluster0.6zsre.mongodb.net/nba_games?retryWrites=true&w=majority');
+mongoose.connect('mongodb+srv://nbauser:Jm8q7RMr9jZPX3E4@cluster0.6zsre.mongodb.net/nba_games?retryWrites=true&w=majority');
 mongoose.set('debug', true);
 
 const connection = mongoose.connection;

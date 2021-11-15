@@ -6,7 +6,7 @@ const cheerio = require('cheerio');
 const puppeteer = require('puppeteer');
 const url = 'https://www.flashscore.com/basketball/';
 var MongoClient = require('mongodb').MongoClient;
-var dburl = "mongodb+srv://nbauser:nbauserpwd@cluster0.6zsre.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+var dburl = "mongodb+srv://nbauser:Jm8q7RMr9jZPX3E4@cluster0.6zsre.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 
 // fetchLiveGames = () => {
 
