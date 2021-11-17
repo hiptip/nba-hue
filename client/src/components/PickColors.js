@@ -97,7 +97,6 @@ const PickColors = React.memo((props) => {
     const [name, setName] = useState()
 
     const handleChangeComplete = (color) => {
-        console.log(color.hex)
         setTeamColor(color.hex)
     }
 
