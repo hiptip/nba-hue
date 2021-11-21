@@ -6,8 +6,9 @@ import Icons from "@material-ui/icons";
 import CardActionArea from "@material-ui/core/CardActionArea";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
+import Calibration from "./Calibration";
 import Grid from '@material-ui/core/Grid';
-import PickColors from './PickColors';
+import PickSingleColor from './PickSingleColor';
 import { nbaLogoMap } from '../util/logos'
 
 const useStyles = makeStyles((theme) => ({
@@ -41,8 +42,7 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: 'center',
         position: 'relative',
         fontFamily: 'Roboto Mono',
-        background:'#ED6D1C',
-        // background:'white',
+        background: (props) => props.lightColorHex,
     },
     modalBox: {
         position: 'fixed',
@@ -277,7 +277,7 @@ const useStyles = makeStyles((theme) => ({
         display:'inline-block',
         textTransform:'uppercase',
         marginRight:10,
-        background:'#F58426',
+        background: (props) => props.awayColor,
         padding:10,
         borderRadius:'50px'
     },
@@ -285,7 +285,7 @@ const useStyles = makeStyles((theme) => ({
         display:'inline-block',
         textTransform:'uppercase',
         marginRight:10,
-        background:'#00538C',
+        background: (props) => props.homeColor,
         padding:10,
         borderRadius:'50px'
     },
@@ -322,10 +322,20 @@ const useStyles = makeStyles((theme) => ({
 
 const GamePage = (props) => {
 
-    const classes = useStyles();
+    const [isOpen, setIsOpen] = useState(false);
+    const [isColorOpen, setIsColorOpen] = useState(false);
+    const [colorPickTeam, setColorPickTeam] = useState();
+    const [initialColor, setInitialColor] = useState();
+
+
+    const classes = useStyles(props);
 
     const toggleGameView = () => {
         props.setGameView(!props.gameView)
+    }
+
+    const closeScreen = () => {
+        setIsOpen(false)
     }
 
     const mockGameData = [
@@ -343,6 +353,43 @@ const GamePage = (props) => {
     const getLogoUrl = (teamName) => {
         const teamData = nbaLogoMap.find(team => teamName.includes(team.mascot))
         return teamData.logoURL
+    }
+
+    const getShortName = (teamName) => {
+        const teamData = nbaLogoMap.find(team => teamName.includes(team.mascot))
+        return teamData.short
+    }
+
+    const getQuarter = (gameTime) => {
+        var regex = /'\b\d'/
+        var quarter = ''
+        console.log(gameTime)
+        if (regex.exec(gameTime)) {
+            quarter = gameTime[0]
+        }
+        return quarter
+    }
+
+    
+    const getTimeRemaining = (gameTime) => {
+    }
+
+    const togglePickColorModal = () => {
+        setIsColorOpen(true);
+    }
+
+    const closeColorScreen = () => {
+        setIsColorOpen(false)
+    }
+
+    const toggleCalibrateModal = () => {
+        setIsOpen(true)
+    }
+
+    const changeColor = (team) => {
+        setColorPickTeam(team)
+        props.team === "home" ? setInitialColor(props.homeColor) : setInitialColor(props.awayScore)
+        togglePickColorModal()
     }
 
 
@@ -370,13 +417,13 @@ const GamePage = (props) => {
                         <img className={classes.logo} src={getLogoUrl(props.awayTeam)} alt='team logo'></img>
                     </div>
                     <div className={classes.changeColorPosition}>
-                        <div className={classes.changeColor}><div class={classes.awayColor}></div>Change Color</div>
+                        <div className={classes.changeColor} onClick={() => changeColor("away")} ><div class={classes.awayColor}></div>Change Color</div>
                     </div>
                 </Grid>
                 <Grid item xs={4} sm={2}>
                     <div className={classes.nameScore}>
-                        <p className={`${classes.text} ${classes.teamName}`}>{props.awayTeam}</p>
-                        <p className={`${classes.text} ${classes.teamScore}`}>{game ? game.awayScore : ""}</p>
+                        <p className={classes.awayTeamName}>{getShortName(props.awayTeam)}</p>
+                        <p className={classes.awayTeamScore}>{game ? game.awayScore : ""}</p>
                     </div>
                 </Grid>
                 <Grid item xs={2} className={classes.timeItems}>
@@ -390,7 +437,7 @@ const GamePage = (props) => {
                 </Grid>
                 <Grid item xs={4} sm={2}>
                     <div className={classes.nameScore}>
-                        <p className={`${classes.text} ${classes.teamName}`}>{props.homeTeam}</p>
+                        <p className={`${classes.text} ${classes.teamName}`}>{getShortName(props.homeTeam)}</p>
                         <p className={`${classes.text} ${classes.teamScore}`}>{game ? game.homeScore : ""}</p>
                     </div>
                 </Grid>
@@ -399,10 +446,13 @@ const GamePage = (props) => {
                         <img className={classes.logo} src={getLogoUrl(props.homeTeam)} alt='team logo'></img>
                     </div>
                     <div className={classes.changeColorPosition}>
-                        <div className={classes.changeColor}><div class={classes.homeColor}></div>Change Color</div>
+                        <div className={classes.changeColor} onClick={() => changeColor("home")} ><div class={classes.homeColor}></div>Change Color</div>
                     </div>
                 </Grid>
             </Grid>
+            <button className={classes.calibrate} onClick={toggleCalibrateModal} >CALIBRATE LATENCY</button>
+            <Calibration isOpen={isOpen} closeScreen={closeScreen} intervalId={props.intervalId} setIntervalId={props.setIntervalId} setDelay={props.setDelay} delay={props.delay} />
+            <PickSingleColor toggleModal={togglePickColorModal} isOpen={isColorOpen} closeScreen={closeColorScreen} team={colorPickTeam} setAwayColor={props.setAwayColor} setHomeColor={props.setHomeColor} awayTeam={props.awayTeam} homeTeam={props.homeTeam} setGameView={props.setGameView} initialColor={initialColor} />
         </div>
     )
 }

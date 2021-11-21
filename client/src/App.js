@@ -11,9 +11,9 @@ import GamePage from './components/GamePage';
 const App = () => {
   const [homeColor, setHomeColor] = useState("#1271ff")
   const [awayColor, setAwayColor] = useState("#009e05")
-  const [neutralColor, setNeutralColor] = useState([255, 201, 74])
-  const [intervalId, setIntervalId] = useState()
-  const [lightColorHex, setLightColorHex] = useState("#000000")
+  const [neutralColor, setNeutralColor] = useState([247, 232, 195])
+  const [currentIntervalId, setCurrentIntervalId] = useState()
+  const [lightColorHex, setLightColorHex] = useState("#f7e8c3")
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [hueConfigured, setHueConfigured] = useState(false)
   const [hueUsername, setHueUsername] = useState() //"rpFOVnRT3f3nX484o6arbY-HzrnjjObfsihT3n82"
@@ -22,7 +22,7 @@ const App = () => {
   const [homeTeam, setHomeTeam] = useState()
   const [awayTeam, setAwayTeam] = useState()
   const [timeStamp, setTimeStamp] = useState('')
-  const [delay, setDelay] = useState(60000)
+  const [delay, setDelay] = useState(30000)
   const [checkedLights, setCheckedLights] = useState([])
   const [gameView, setGameView] = useState(false)
   const [singleGameData, setSingleGameData] = useState({})
@@ -67,22 +67,19 @@ const App = () => {
   const controlLights = (game) => {
     if (game) {
       let colorXY = scoreToXY(parseInt(game.homeScore), parseInt(game.awayScore))
-      console.log(colorXY)
       setColor(colorXY[0], colorXY[1], checkedLights) //seems like this isn't actually updating
     }
   }
 
   const scoreToXY = (hScore, vScore) => {
     const neutralHex = "#FFC94A"
-    const home = "#00BA36"
-    const away = "#1D60E5"
     if (hScore === vScore) {
       return RGBtoXY(neutralColor[0], neutralColor[1], neutralColor[2])
     }
     if (hScore > vScore) {
       let diff = hScore - vScore
       let percent = diff / 20
-      let gradientColor = getGradientColor(neutralHex, home, percent) //update this
+      let gradientColor = getGradientColor(neutralHex, homeColor, percent) //update this
       setLightColorHex(gradientColor)
       let rgb = hexToRgb(gradientColor)
       if (rgb) {
@@ -92,7 +89,8 @@ const App = () => {
     if (hScore < vScore) {
       let diff = vScore - hScore
       let percent = diff / 20
-      let gradientColor = getGradientColor(neutralHex, away, percent) //update this
+      let gradientColor = getGradientColor(neutralHex, awayColor, percent) //update this
+      setLightColorHex(gradientColor)
       let rgb = hexToRgb(gradientColor)
       if (rgb) {
         return RGBtoXY(rgb.r, rgb.g, rgb.b)
@@ -117,12 +115,12 @@ const App = () => {
   }, [liveGames])
 
   useEffect(() => { //update this logic
-    connectHue()
-  }, [hueConfigured])
+    gamePolling()
+  }, [hueConfigured, delay])
 
   const setColor = (x, y, lights) => {
-    for (const light in lights) {
-      fetch(`https://${bridgeIp}/api/${hueUsername}/lights/${light}/state`, { 
+    for (let [index, val] of lights.entries()) {
+      fetch(`http://${bridgeIp}/api/${hueUsername}/lights/${val}/state`, { 
         method: 'PUT',
         body: JSON.stringify({ "xy": [x, y] })
       })
@@ -130,27 +128,37 @@ const App = () => {
 
   }
 
-  const connectHue = () => {
-    if (intervalId) {
-      clearInterval(intervalId)
+  // const gamePolling = () => {
+  //   if (currentIntervalId) {
+  //     clearInterval(currentIntervalId)
+  //   }
+  //   var intId = setInterval(() => {
+  //     getAllGames()
+  //   }, 6000)
+  //   setCurrentIntervalId(intId)
+  // }
+
+  const gamePolling = () => {
+    if (currentIntervalId) {
+      clearInterval(currentIntervalId)
     }
     var intId = setInterval(() => {
       getAllGames()
-    }, 6000)
-    setIntervalId(intId)
+    }, 1000)
+    setCurrentIntervalId(intId)
   }
 
   return (
     <div>
-      {!hueConfigured && <ConnectHue setHueUsername={setHueUsername} setHueConfigured={setHueConfigured} hueUsername={hueUsername} setCheckedLights={setCheckedLights} setBridgeIp={setBridgeIp} />}
+      {!hueConfigured && <ConnectHue setHueUsername={setHueUsername} setHueConfigured={setHueConfigured} hueUsername={hueUsername} setCheckedLights={setCheckedLights} setBridgeIp={setBridgeIp} bridgeIp={bridgeIp} />}
       { (hueConfigured && !gameView) &&
         <div className="App">
-          <LiveGames liveGames={liveGames} setHomeTeam={setHomeTeam} setAwayTeam={setAwayTeam} setAwayColor={setAwayColor} setHomeColor={setHomeColor} awayTeam={awayTeam} homeTeam={homeTeam} setGameView={setGameView} setSingleGameData={setSingleGameData} />
+          <LiveGames lightColorHex={lightColorHex} liveGames={liveGames} setHomeTeam={setHomeTeam} setAwayTeam={setAwayTeam} setAwayColor={setAwayColor} setHomeColor={setHomeColor} awayTeam={awayTeam} homeTeam={homeTeam} setGameView={setGameView} setSingleGameData={setSingleGameData} />
           <PickColors setAwayColor={setAwayColor} setHomeColor={setHomeColor} awayTeam={awayTeam} homeTeam={homeTeam} setGameView={setGameView} />
         </div>
       }
       { (hueConfigured && gameView) &&
-        <GamePage homeTeam={homeTeam} awayTeam={awayTeam} homeColor={homeColor} awayColor={awayColor} liveGames={liveGames} setGameView={setGameView} gameView={gameView} />
+        <GamePage setDelay={setDelay} setIntervalId={setCurrentIntervalId} intervalId={currentIntervalId} delay={delay} homeTeam={homeTeam} awayTeam={awayTeam} homeColor={homeColor} awayColor={awayColor} liveGames={liveGames} setGameView={setGameView} gameView={gameView} lightColorHex={lightColorHex} setHomeColor={setHomeColor} setAwayColor={setAwayColor} />
       }
     </div>
   );

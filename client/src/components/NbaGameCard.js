@@ -57,7 +57,10 @@ const useStyles = makeStyles((theme) => ({
         color:'white',
         marginLeft:10,
         textAlign:'left',
-        width:'100%'
+        width:'100%',
+        [theme.breakpoints.down('xs')]: {
+            fontSize: 32
+        }
     },
     teamNameHome: {
         fontFamily: 'Roboto Mono',
@@ -74,7 +77,10 @@ const useStyles = makeStyles((theme) => ({
         color:'white',
         margin:0,
         marginRight:10,
-        textAlign:'right'
+        textAlign:'right',
+        [theme.breakpoints.down('xs')]: {
+            fontSize: 32
+        }
     },
     centerSpread: {
         alignItems: 'center',
@@ -124,7 +130,8 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor:'rgba(255,255,255,.2)',
         [theme.breakpoints.down('xs')]: {
             width: 20,
-            height: 20
+            height: 20,
+            // backgroundColor: props.lightColorHex,
         }
     }
 }));
@@ -143,12 +150,16 @@ const NbaGameCard = (props) => {
     // const routeResults = useRoutes(routes);
 
     const toggleModal = () => {
-        console.log()
         setIsOpen(true);
     }
 
     const closeScreen = () => {
         setIsOpen(false)
+    }
+
+    const getShortName = (teamName) => {
+        const teamData = nbaLogoMap.find(team => teamName.includes(team.mascot))
+        return teamData.short
     }
 
     const setTeams = (hTeam, aTeam) => {
@@ -179,7 +190,7 @@ const NbaGameCard = (props) => {
                 </Grid>
                 <Grid item xs={3}>
                         <div className={classes.stats}>
-                            <p className={classes.teamNameAway}>{props.awayTeam}</p>
+                            <p className={classes.teamNameAway}>{getShortName(props.awayTeam)}</p>
                             <p className={classes.scoreAway}>{props.awayScore}</p>
                         </div>
                 </Grid>
@@ -191,7 +202,7 @@ const NbaGameCard = (props) => {
                 </Grid>
                 <Grid item xs={3}>
                         <div className={classes.stats}>
-                            <p className={classes.teamNameHome}>{props.homeTeam}</p>
+                            <p className={classes.teamNameHome}>{getShortName(props.homeTeam)}</p>
                             <p className={classes.scoreHome}>{props.homeScore}</p>
                         </div>
                 </Grid>

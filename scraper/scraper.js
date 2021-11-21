@@ -14,6 +14,7 @@ connection.once("open", function () {
             .then(async browser => {
                 //opening a new page and navigating to Fleshscore
                 const page = await browser.newPage();
+                await page.setDefaultNavigationTimeout(0);
                 await page.goto('https://www.flashscore.com/basketball');
                 await page.waitForSelector('body');
                 await page.exposeFunction('newScore', s => console.log(s));
