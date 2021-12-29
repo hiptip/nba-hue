@@ -34,11 +34,10 @@ const useStyles = makeStyles((theme) => ({
     },
     modalHeader: {
         textAlign: 'center',
-        fontFamily: 'Roboto',
-        fontWeight:500,
+        fontFamily: 'Roboto Mono',
         margin:'20px auto 30px auto',
         maxWidth:500,
-        // textTransform:'uppercase',
+        textTransform:'uppercase',
         [theme.breakpoints.down('xs')]: {
             fontSize:'1.1em'
         }
@@ -74,48 +73,42 @@ const useStyles = makeStyles((theme) => ({
         fontFamily: 'Roboto Mono',
         fontWeight: 700
     },
-    buttonStyle: {
-        display:'inline-flex',
-        alignItems:'center',
-        cursor: 'pointer',
-        fontSize: '1em',
-        fontFamily:'Roboto',
-        fontWeight:'500',
-        border:'none',
-        margin:'0 auto',
-        padding:'20px 30px',
-        textTransform:'uppercase',
-        borderRadius:'50px',
-    },
     nextButton: {
+        padding:'15px 30px',
+        cursor:'pointer',
+        fontFamily:'Roboto Mono',
         margin:5,
+        borderStyle: 'solid',
+        borderWidth: '1',
+        borderColor: 'black',
+        borderRadius: 100,
         background: 'black',
         color: 'white',
-        border:'1px solid black'
+        fontSize:'1em',
+        fontWeight:'bold'
     },
     prevButton: {
+        padding:'15px 30px',
+        cursor:'pointer',
+        fontFamily:'Roboto Mono',
         margin:5,
+        borderStyle: 'solid',
+        borderWidth: '1',
+        borderColor: 'black',
+        borderRadius: 100,
         background: 'white',
         color: 'black',
-        border:'1px solid black'
-    },
-    cancelButton: {
-        display: 'none',
-        fontSize: '2em',
-        padding: '10px',
-        [theme.breakpoints.down('sm')]: {
-            display: 'inline-block'
-        }
+        fontSize:'1em',
+        fontWeight:'bold'
     }
 }));
 
-const PickColors = React.memo((props) => {
+const PickSingleColor = React.memo((props) => {
     const classes = useStyles();
     const [isOpen, setIsOpen] = useState(false);
-    const [teamColor, setTeamColor] = useState()
-    const [team, setTeam] = useState(1)
-    const [logo, setLogo] = useState()
-    const [name, setName] = useState(props.awayTeam)
+    const [teamColor, setTeamColor] = useState(props.initialColor)
+    // const [team, setTeam] = useState(1)
+    // const [logo, setLogo] = useState()
 
     const handleChangeComplete = (color) => {
         setTeamColor(color.hex)
@@ -129,34 +122,38 @@ const PickColors = React.memo((props) => {
     //     props.setIsOpen(false)
     // }
 
-    const nextScreen = () => {
-        if (team === 2) {
-            props.setHomeColor(teamColor)
-            props.setGameView(true)
-            props.toggleModal()
-        } else {
-            props.setAwayColor(teamColor)
-        }
-        setTeam(team + 1)
-        setLogo(props.homeLogo)
-        setName(props.homeTeam)
+    // const nextScreen = () => {
+    //     if (team === 2) {
+    //         props.setHomeColor(teamColor)
+    //         props.setGameView(true)
+    //         props.toggleModal()
+    //     } else {
+    //         props.setAwayColor(teamColor)
+    //     }
+    //     setTeam(team + 1)
+    //     setLogo(props.homeLogo)
+    //     setName(props.homeTeam)
 
-    }
+    // }
 
-    const prevScreen = () => {
-        setTeam(team - 1)
-        setLogo(props.awayLogo)
-        setName(props.awayTeam)
-    }
+    // const prevScreen = () => {
+    //     setTeam(team - 1)
+    //     setLogo(props.awayLogo)
+    //     setName(props.awayTeam)
+    // }
 
-    const getLogoUrl = (teamNum) => {
-        const teamName = teamNum === 1 ? props.awayTeam : props.homeTeam
+    const getLogoUrl = (teamName) => {
         if (teamName) {
             const teamData = nbaLogoMap.find(t => teamName.includes(t.mascot))
             return teamData.logoURL
         }
         return ""
     }
+
+    const setColor = () => {
+        (props.team === "home") ? props.setHomeColor(teamColor) : props.setAwayColor(teamColor)
+        props.closeScreen()
+    } 
 
     return (
         <div className="App">
@@ -171,19 +168,18 @@ const PickColors = React.memo((props) => {
                 shouldCloseOnOverlayClick={true}
             >
                 <div>
-                    <div className={classes.cancelButton} onClick={props.closeScreen}>X</div>
-                    <div className={classes.logoContainerColorPicker}>
-                        <img className={classes.logo} src={getLogoUrl(team)} alt={`${team} logo`} ></img>
+                    <div class={classes.logoContainerColorPicker}>
+                    <img className={classes.logo} src={getLogoUrl((props.team === "home") ? props.homeTeam : props.awayTeam)} alt={`${props.team} logo`}></img>
                     </div>
-                    <h1 className={classes.modalHeader}>Choose {name} Color</h1>
-
+                    <h1 className={classes.modalHeader}>Choose {(props.team === "home") ? props.homeTeam : props.awayTeam} Color</h1>
                     <ChromePicker
                         color={teamColor}
                         onChangeComplete={handleChangeComplete}
                         className={classes.colorPicker}
                     />
                     <footer className={classes.modalFooter}>
-                        {(team === 1) ? <button className={`${classes.buttonStyle} ${classes.nextButton}`} onClick={nextScreen}>NEXT</button> : <div><button className={`${classes.buttonStyle} ${classes.prevButton}`} onClick={prevScreen}>BACK</button><button className={`${classes.buttonStyle} ${classes.nextButton}`} onClick={nextScreen}>NEXT</button></div>}
+                        <button className={classes.nextButton} onClick={setColor}>SET COLOR</button>
+                        {/* {(team === 1) ? <button className={classes.nextButton} onClick={nextScreen}>NEXT</button> : <div><button className={classes.prevButton} onClick={prevScreen}>BACK</button><button className={classes.nextButton} onClick={nextScreen}>NEXT</button></div>} */}
                     </footer>
                 </div>
             </Modal>
@@ -191,4 +187,4 @@ const PickColors = React.memo((props) => {
     )
 })
 
-export default PickColors
+export default PickSingleColor

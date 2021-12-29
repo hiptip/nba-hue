@@ -8,7 +8,10 @@ let liveGameSchema = new Schema(
         awayTeam: String,
         homeScore: Number,
         awayScore: Number,
-        gameTime: String
+        quarter: Number,
+        minutesRemaining: Number,
+        secondsRemaining: Number,
+        status: String
     }
 )
 

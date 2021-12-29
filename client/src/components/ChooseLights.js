@@ -1,57 +1,75 @@
 import React, { useState, useContext } from 'react'
 import { makeStyles } from "@material-ui/core/styles";
 
-const useStyles = makeStyles((theme) => ({
-
-
+const useStyles = makeStyles({
+    "@keyframes lightGlow": {
+        "0%": {
+            boxShadow:'0 0 10px rgba(255,255,255,.2)',
+        },
+        "50%": {
+            boxShadow:'0 0 500px rgba(255,255,255,1)',
+        },
+        "100%": {
+            boxShadow:'0 0 10px rgba(255,255,255,.2)',
+        }
+    },
     modalBox: {
         position: 'fixed',
         top: '50%',
         left: '50%',
-        width: '40%',
-        height: '65%',
-        [theme.breakpoints.down('sm')]: {
-            width: '80%',
-            height: '50%'
-          },
+        width:'400px',
+        padding:'50px',
         borderRadius: 20,
         transform: 'translate(-50%, -50%)',
         textAlign: 'center',
+        // boxShadow:'0 0 100px rgba(255,255,255,1)',
         backgroundColor: "white",
-        // padding: 50
+        animation: '$lightGlow 20s ease infinite',
+        '@media (max-width:600px)': {
+            width: '100vw',
+            height:'100vh',
+            paddingTop:200
+        },
+    },
+    h2: {
+        padding:0,
+        margin:0,
+        fontSize:'32px',
+        fontFamily:'Roboto',
+        fontWeight:500
     },
     list: {
         textAlign: "left",
-        width: "40%",
+        width: "100%",
         margin: "auto",
+        padding: '30px 20px',
         listStyleType: "none",
     },
     listItem: {
-        padding: 5
+        padding: '5px 0px 5px 0px'
     },
-    button: {
-        position: 'absolute',
-        backgroundColor: 'black',
-        border: 'none',
-        color: 'white',
-        padding: '15px 32px',
-        textAlign: 'center',
-        textDecoration: 'none',
-        display: 'inline-block',
-        fontSize: '16px',
-        borderRadius: '100px',
-        width: 230,
-        left: 0,
-        right: 0,
-        margin: 'auto',
-        bottom: 50,
-        fontFamily: 'Roboto Mono',
-        fontWeight: 700,
-        '&:hover': {
-            backgroundColor: '#333131',
-        },
+    buttonStyle: {
+        display:'flex',
+        alignItems:'center',
+        cursor: 'pointer',
+        fontSize: '1em',
+        fontFamily:'Roboto',
+        fontWeight:'500',
+        border:'none',
+        margin:'0 auto',
+        padding:'20px 30px',
+        textTransform:'uppercase',
+        borderRadius:'50px',
+    },
+    buttonBlack: {
+        backgroundColor:'black',
+        color:'white'
+    },
+    buttonWhite: {
+        backgroundColor:'whitte',
+        color:'black'
     }
-}));
+})
 
 const ChooseLights = (props) => {
     const classes = useStyles();
@@ -451,16 +469,23 @@ const ChooseLights = (props) => {
         props.setHueConfigured(true)
     }
 
+    const indicateLight = (val) => {
+        fetch(`http://${props.bridgeIp}/api/${props.hueUsername}/lights/${val}/state`, {
+            method: 'PUT',
+            body: JSON.stringify({ "alert": "select" })
+        })
+    }
+
 
     return (
         <div className={classes.modalBox}>
-            <h2>Choose lights</h2>
-            <ul className={classes.list}>
+            <h2 className={classes.h2}>Choose lights</h2>
+        <ul className={classes.list}>
                 {props.lights && Object.entries(props.lights).map(([key, value]) =>
-                    <li className={classes.listItem} key={key}><input type="checkbox" value={key} onChange={onChange} /> {value.name}</li>
+                    <li className={classes.listItem} key={key}><input type="checkbox" value={key} onChange={onChange} onClick={() => indicateLight(key)} /> {value.name}</li>
                 )}
             </ul>
-            <button className={classes.button} onClick={setLights}>NEXT</button>
+            <button className={`${classes.buttonStyle} ${classes.buttonBlack}`} onClick={setLights}>NEXT</button>
         </div>
     )
 }

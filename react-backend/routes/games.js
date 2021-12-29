@@ -76,7 +76,7 @@ router.get('/', function (req, res, next) {
     if (err) throw err;
     var dbo = db.db('nba_games');
     if (!req.query.timeStamp) {
-      var query = { timeStamp: {$gte: Date.now() - req.query.delay} }; // .limit(1)
+      var query = { timeStamp: {$gte: Date.now() - Math.max(req.query.delay, 3000)} }; // .limit(1)
     } else {
       var query = { timeStamp: {$gt: parseInt(req.query.timeStamp)} }; // .limit(1)
     }
@@ -84,8 +84,9 @@ router.get('/', function (req, res, next) {
     //.limit(1)   basically if greater than timestamp and limit 1 -- if timestamp not set just set it automatically 
     dbo.collection('live_games').find(query).limit(1).toArray(function (err, result) {
       if (err) throw err;
-      // console.log(result[0].games);
-      res.send(result[0].games)
+      if (result) {
+        res.send(result[0].games.filter(game => game.status == 'InProgress'))
+      }
       db.close();
     });
   });
