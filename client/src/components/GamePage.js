@@ -393,7 +393,6 @@ const GamePage = (props) => {
         togglePickColorModal()
     }
 
-
     var game = props.liveGames.find(game => game.homeTeam === props.homeTeam) //default to state if no value
     // console.log(game)
 

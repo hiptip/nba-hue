@@ -22,7 +22,7 @@ const App = () => {
   const [homeTeam, setHomeTeam] = useState()
   const [awayTeam, setAwayTeam] = useState()
   const [timeStamp, setTimeStamp] = useState('')
-  const [delay, setDelay] = useState(30000)
+  const [delay, setDelay] = useState(15000)
   const [checkedLights, setCheckedLights] = useState([])
   const [gameView, setGameView] = useState(false)
   const [singleGameData, setSingleGameData] = useState({})
