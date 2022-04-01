@@ -74,25 +74,5 @@ connection.once("open", function () {
                 })
             })
             .catch(err => console.log(err));
-
-        
-
-        // scrapeItems.push({
-        //     homeTeam: homeTeam,
-        //     awayTeam: awayTeam,
-        //     homeScore: currentHomeScore,
-        //     awayScore: currentAwayScore,
-        //     gameTime: gameTime
-        // });
-        // let games = new liveGames({ timeStamp: Date.now() });
-        // for (const match in grabMatches) {
-        //     console.log(games)
-        //     var game = new liveGame(grabMatches[match]);
-        //     games.games.push(game)
-        // }
-        // games.save(function (err, game) {
-        //     if (err) return console.error(err);
-        //     console.log(game)
-        // })
     }, 3000);
 });
