@@ -1,0 +1,4 @@
+node_modules/
+react-backend/node_modules/
+client/node_modules/
+.DS_STORE
